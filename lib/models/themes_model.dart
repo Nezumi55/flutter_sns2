@@ -1,0 +1,32 @@
+// flutter
+import 'package:flutter/material.dart';
+// packages
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_sns/constants/strings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final themeProvider = ChangeNotifierProvider((ref) => ThemeModel());
+
+class ThemeModel extends ChangeNotifier {
+  late SharedPreferences preferences;
+  bool isDarkTheme = true;
+
+  ThemeModel() {
+    init();
+  }
+
+  Future<void> init() async {
+    preferences = await SharedPreferences.getInstance();
+    final x = preferences.getBool(isDarkThemePrefsKey);
+    if (x != null) {
+      isDarkTheme = x;
+    }
+    notifyListeners();
+  }
+
+  void setIsDarkTheme({required bool value}) async {
+    isDarkTheme = value;
+    await preferences.setBool(isDarkThemePrefsKey, value);
+    notifyListeners();
+  }
+}
